@@ -10,7 +10,8 @@ class TorrentDB
   end
 
   def << (entry)
-    if torrents[title: entry[:title]] && !torrents[title: entry[:title]][:messaged]
+    if torrent = torrents[title: entry[:title]]
+      return if torrent[:messaged]
       LOG.info "Updating DB entry for #{entry[:title]}"
       torrents.where(title: entry[:title]).update(entry)
     else
