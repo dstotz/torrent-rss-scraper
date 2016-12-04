@@ -7,12 +7,15 @@ class RSSScraper
   def initialize(feed_url)
     @feed_url = feed_url
     @rss = SimpleRSS.parse open(feed_url)
+    @current_rank = 0
   end
   
   def find_new_torrents
     rss.entries.each do |torrent|
+      @current_rank += 1
       next unless torrent[:title].downcase.include?('1080p')
       torrent[:movie] = movie_title(torrent[:title])
+      torrent[:current_rank] = @current_rank
       torrent[:messaged] = false
       DB << torrent
     end

@@ -47,6 +47,7 @@ class TorrentDB
       String :guid
       String :link
       String :dc_creator
+      Integer :current_rank
       TrueClass :messaged
       DateTime :pubDate
     end

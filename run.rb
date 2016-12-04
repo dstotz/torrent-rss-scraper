@@ -14,8 +14,10 @@ RSSScraper.new(feed_url).find_new_torrents
 
 DB.unmessaged_torrents.each do |torrent|
   LOG.info "Messaging #{torrent[:title]}"
-  message = "#{torrent[:movie]}\n\nUploaded by: #{torrent[:dc_creator]}\n#{torrent[:title]}"
+  message = "#{torrent[:movie]}\n\nCurrent Rank: #{torrent[:current_rank]}" \
+            "\nUploaded by: #{torrent[:dc_creator]}\n#{torrent[:title]}"
   torrent_url = torrent[:guid]
   MESSENGER.send(torrent_url, message)
   DB.update_messaged(torrent)
 end
+
