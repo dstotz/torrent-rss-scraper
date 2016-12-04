@@ -16,5 +16,3 @@ DB.todays_torrents.each do |torrent|
   MESSENGER.send(torrent_url, message)
   DB.update_messaged(torrent)
 end
-
-require 'pry'; binding.pry; puts ''
