@@ -10,23 +10,29 @@ class TorrentDB
   end
 
   def << (entry)
-    if torrent = torrents[title: entry[:title]]
-      return if torrent[:messaged] || entry[:pubDate] < torrent[:pubDate]
+    if torrents[title: entry[:title]] && !torrents[title: entry[:title]][:messaged]
+      LOG.info "Updating DB entry for #{entry[:title]}"
       torrents.where(title: entry[:title]).update(entry)
     else
+      LOG.info "Creating new DB entry for #{entry[:title]}"
       torrents.insert(entry)
     end
   end
 
   def update_messaged(entry)
+    LOG.info "Setting torrent as messaged #{entry[:title]}"
     torrents.where(title: entry[:title]).update(messaged: true)
   end
 
-  def todays_torrents(include_messaged: false)
-    if include_messaged
-      torrents.where('pubDate >= ?', TODAY).all
-    else
+  def unmessaged_torrents
+    torrents.exclude('messaged = ?', true).all
+  end
+
+  def todays_torrents(exclude_messaged: false)
+    if exclude_messaged
       torrents.where('pubDate >= ?', TODAY).exclude('messaged = ?', true).all
+    else
+      torrents.where('pubDate >= ?', TODAY).all
     end
   end
 
